@@ -24,21 +24,23 @@ io.on("connection", (socket) => {
 
   socket.on("join", async (userId) => {
     console.log(`User ${userId} joined`);
-    // Additional logic for handling user sessions
-  });
-  socket.on("disconnect", (userId) => {
-    console.log(`${userId} Disconnected from server`);
+    socket.join(userId); // Join the user to a room with their userId
   });
 
   socket.on("sendNotification", ({ validUsers, commentId }) => {
-    validUsers.map((user) =>
-      io.to(user.id).emit("notification", {
-        type: "mention",
-        message: `You were mentioned in a comment by @${user.userName}`,
-        commentId: commentId,
-        createdAt: new Date(),
-      })
-    );
+    try {
+      validUsers.forEach((user) => {
+        console.log(`Sending notification to user ${user.id}`);
+        io.to(user.id).emit("notification", {
+          type: "mention",
+          message: `You were mentioned in a comment by @${user.userName}`,
+          commentId: commentId,
+          createdAt: new Date(),
+        });
+      });
+    } catch (error) {
+      console.error("Error emitting notifications:", error);
+    }
   });
 });
 
@@ -58,22 +60,8 @@ app.post("/api/save-subscription", (req, res) => {
   subDatabase.push(req.body);
   res.status(200).json({ status: "Success", message: "Subscription saved!" });
 });
-// app.post("/api/notify", async (req, res) => {
-//   const { validUsers, commentId } = req.body;
-//   if (!io) {
-//     return res.status(500).send("Socket.io is not initialized");
-//   }
 
-//   try {
-//     // Use Promise.all to wait for all notifications to be sent
-//     await Promise.all();
-//   } catch (error) {
-//     console.error("Failed to send notifications:", error);
-//     res.status(500).send("Failed to send notifications");
-//   }
-// });
-
-app.post("api/send-notification", (req, res) => {
+app.post("/api/send-notification", (req, res) => {
   if (subDatabase.length > 0) {
     webpush
       .sendNotification(subDatabase[0], req.body.message)
