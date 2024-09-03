@@ -63,6 +63,7 @@ app.post("/api/save-subscription", (req, res) => {
 
 app.post("/api/send-notification", (req, res) => {
   if (subDatabase.length > 0) {
+    console.log("🚀 ~ app.post ~ subDatabase:", subDatabase)
     webpush
       .sendNotification(subDatabase[0], req.body.message)
       .then(() => {
