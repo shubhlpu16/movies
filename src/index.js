@@ -59,8 +59,8 @@ webpush.setVapidDetails(
 
 app.post("/api/save-subscription", (req, res) => {
   // console.log("🚀 ~ app.post ~ req:", req)
-  const  {subsription, userId} = req.body;
-  subDatabase[userId] = subsription;
+  const  {subscription, userId} = req.body;
+  subDatabase[userId] = subscription;
   // subDatabase.push(req.body);
   res.status(200).json({ status: "Success", message: "Subscription saved!" });
 });
