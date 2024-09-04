@@ -28,13 +28,13 @@ io.on("connection", (socket) => {
     socket.join(userId); // Join the user to a room with their userId
   });
 
-  socket.on("sendNotification", ({ validUsers, commentId }) => {
+  socket.on("sendNotification", ({ validUsers, commentId, sender }) => {
     try {
       validUsers.forEach((user) => {
         console.log(`Sending notification to user ${user.id}`);
         io.to(user.id).emit("notification", {
           type: "mention",
-          message: `You were mentioned in a comment by @${user.userName}`,
+          message: `You were mentioned in a comment by @${sender.userName}`,
           commentId: commentId,
           createdAt: new Date(),
         });
