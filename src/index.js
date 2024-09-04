@@ -58,7 +58,7 @@ webpush.setVapidDetails(
 );
 
 app.post("/api/save-subscription", (req, res) => {
-  console.log("🚀 ~ app.post ~ req:", req)
+  // console.log("🚀 ~ app.post ~ req:", req)
   const  {subsription, userId} = req.body;
   subDatabase[userId] = subsription;
   // subDatabase.push(req.body);
@@ -66,6 +66,7 @@ app.post("/api/save-subscription", (req, res) => {
 });
 
 app.post("/api/send-notification", (req, res) => {
+  console.log(subDatabase)
   if (subDatabase[req.body.userId]) {
     // console.log("🚀 ~ app.post ~ subDatabase:", subDatabase)
     webpush
