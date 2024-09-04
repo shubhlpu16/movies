@@ -12,7 +12,8 @@ const webpush = require("web-push");
 app.use(cors());
 app.use(express.json());
 
-const subDatabase = [];
+// const subDatabase = [];
+const subDatabase = {};
 
 // Example route to demonstrate middleware usage
 app.get("/", (req, res) => {
@@ -57,15 +58,18 @@ webpush.setVapidDetails(
 );
 
 app.post("/api/save-subscription", (req, res) => {
-  subDatabase.push(req.body);
+  console.log("🚀 ~ app.post ~ req:", req)
+  const  {subsription, userId} = req.body;
+  subDatabase[userId] = subsription;
+  // subDatabase.push(req.body);
   res.status(200).json({ status: "Success", message: "Subscription saved!" });
 });
 
 app.post("/api/send-notification", (req, res) => {
-  if (subDatabase.length > 0) {
-    console.log("🚀 ~ app.post ~ subDatabase:", subDatabase)
+  if (subDatabase[req.body.userId]) {
+    // console.log("🚀 ~ app.post ~ subDatabase:", subDatabase)
     webpush
-      .sendNotification(subDatabase[0], req.body.message)
+      .sendNotification(subDatabase[req.body.userId], req.body.message)
       .then(() => {
         res.status(200).send({
           status: "Success",
